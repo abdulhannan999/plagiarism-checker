@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plagiarism Detector Pro</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+</head>
+<body>
+    <!-- Auth Screen (shown first) -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-container">
+            <div class="logo">
+                <i class="fas fa-search"></i>
+                <h1>Plagiarism Detector Pro</h1>
+            </div>
+            <div class="auth-options">
+                <button class="btn btn-primary" id="showLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="btn btn-secondary" id="showSignupBtn">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (hidden until auth) -->
+    <div class="app-container" id="appContainer" style="display: none;">
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-search"></i>
+                    <span>PlagiarismDetector Pro</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#" id="homeLink"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#" id="historyLink"><i class="fas fa-history"></i> History</a></li>
+                    <li><a href="#about" id="aboutLink"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="#contact" id="contactLink"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <button class="btn btn-danger" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Home Page -->
+            <div id="homePage">
+                <!-- Dashboard -->
+                <div class="dashboard" id="dashboard">
+                    <div class="welcome-message">
+                        <h2>Welcome back, <span id="usernameDisplay"></span>!</h2>
+                        <p>Ready to check your documents for plagiarism? Upload or paste your text below to get started.</p>
+                    </div>
+                </div>
+
+                <!-- Plagiarism Checker -->
+                <div class="plagiarism-checker">
+                    <h1><i class="fas fa-search"></i> Plagiarism Checker</h1>
+                    
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <div class="tab active" data-tab="text">Text Comparison</div>
+                            <div class="tab" data-tab="file">Document Comparison</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Comparison Tab -->
+                    <div class="tab-content active" id="text-tab">
+                        <div class="text-areas">
+                            <div class="text-area-container">
+                                <h2><i class="fas fa-file-alt"></i> Original Text</h2>
+                                <textarea id="originalText" placeholder="Enter the original text here..."></textarea>
+                            </div>
+                            <div class="text-area-container">
+                                <h2><i class="fas fa-file-alt"></i> Text to Compare</h2>
+                                <textarea id="compareText" placeholder="Enter the text to compare here..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="controls">
+                            <button class="btn btn-primary" id="checkBtn">
+                                <i class="fas fa-check-circle"></i> Check for Plagiarism
+                            </button>
+                            <button class="btn btn-secondary" id="clearTextBtn">
+                                <i class="fas fa-trash-alt"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Document Comparison Tab -->
+                    <div class="tab-content" id="file-tab">
+                        <div class="file-upload">
+                            <div class="file-upload-container" id="originalFileContainer">
+                                <i class="fas fa-file-upload"></i>
+                                <p>Upload Original Document</p>
+                                <small>Supports .txt, .docx, .pdf (max 5MB)</small>
+                                <input type="file" id="originalFile" accept=".txt,.docx,.pdf" style="display: none;">
+                            </div>
+                            <div class="file-info" id="originalFileInfo"></div>
+                            
+                            <div class="file-upload-container" id="compareFileContainer">
+                                <i class="fas fa-file-upload"></i>
+                                <p>Upload Document to Compare</p>
+                                <small>Supports .txt, .docx, .pdf (max 5MB)</small>
+                                <input type="file" id="compareFile" accept=".txt,.docx,.pdf" style="display: none;">
+                            </div>
+                            <div class="file-info" id="compareFileInfo"></div>
+                        </div>
+                        
+                        <div class="controls">
+                            <button class="btn btn-primary" id="checkFilesBtn">
+                                <i class="fas fa-check-circle"></i> Compare Documents
+                            </button>
+                            <button class="btn btn-danger" id="clearFilesBtn">
+                                <i class="fas fa-trash-alt"></i> Clear Files
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading Indicator -->
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing content for plagiarism...</p>
+                    </div>
+                    
+                    <!-- Results -->
+                    <div class="result" id="result">
+                        <h2><i class="fas fa-chart-bar"></i> Similarity Result</h2>
+                        <div class="similarity-score" id="similarityScore">0%</div>
+                        <p class="similarity-message" id="similarityMessage"></p>
+                        <button class="btn btn-secondary" id="saveResultBtn">
+                            <i class="fas fa-save"></i> Save to History
+                        </button>
+                    </div>
+                    
+                    <!-- Comparison -->
+                    <div class="comparison" id="comparison">
+                        <h2><i class="fas fa-file-alt"></i> Comparison Result</h2>
+                        <div class="comparison-text" id="comparisonText"></div>
+                    </div>
+                </div>
+                
+                <!-- History Section -->
+                <div class="history" id="historySection">
+                    <h2><i class="fas fa-history"></i> Your Previous Checks</h2>
+                    <button class="btn btn-danger" id="clearHistoryBtn">
+                        <i class="fas fa-trash"></i> Clear All History
+                    </button>
+                    <div id="historyList"></div>
+                </div>
+            </div>
+
+            <!-- About Page -->
+            <div id="aboutPage" style="display: none;">
+                <section class="about-section">
+                    <h1><i class="fas fa-info-circle"></i> About PlagiarismDetector Pro</h1>
+                    <div class="about-content">
+                        <div class="about-card">
+                            <i class="fas fa-bullseye"></i>
+                            <h2>Our Mission</h2>
+                            <p>To provide the most accurate and efficient plagiarism detection tools for students, educators, and content creators worldwide.</p>
+                        </div>
+                        <div class="about-card">
+                            <i class="fas fa-lightbulb"></i>
+                            <h2>Our Technology</h2>
+                            <p>Using advanced algorithms like Rabin-Karp, Cosine Similarity, and Levenshtein Distance to deliver precise plagiarism detection results.</p>
+                        </div>
+                        <div class="about-card">
+                            <i class="fas fa-shield-alt"></i>
+                            <h2>Privacy Focused</h2>
+                            <p>Your documents are never stored on our servers without your permission. We respect your privacy and intellectual property.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="team-section">
+                    <h2><i class="fas fa-users"></i> Our Team</h2>
+                    <div class="team-members">
+                        <div class="team-member">
+                           
+                            <img src=" bilal.jpeg">
+                            <h3>Ghulame Bilal</h3>
+                            <p>Lead Developer</p>
+                        </div>
+                        <div class="team-member">
+                            <img src="C:\Users\Laptop wala\Desktop\DSA\dsa updated\updated dsa file\zain.png" alt="Team Member">
+                            <h3>Ali Raza</h3>
+                            <p>Algorithm Specialist</p>
+                        </div>
+                        <div class="team-member">
+                            <img src="Safi.jpeg" alt="Team Member">
+                            <h3>Awais</h3>
+                            <p>UI/UX Designer</p>
+                        </div>
+                    </div>
+                    <div class="team-members">
+                        <div class="team-member">
+                           
+                            <img src=" C:\Users\Laptop wala\Desktop\DSA\dsa updated\updated dsa file\new one.avif">
+                            <h3>Safiullah</h3>
+                            <p>Lead Developer</p>
+                        </div>
+                        <div class="team-member">
+                            <img src="dont.jpeg" alt="Team Member">
+                            <h3>Hamad Aslam</h3>
+                            <p>Algorithm Specialist</p>
+                        </div>
+                        <div class="team-member">
+                            <img src="C:\Users\Laptop wala\Desktop\DSA\dsa updated\updated dsa file\new.webp" alt="Team Member">
+                            <h3>Imran</h3>
+                            <p>UI/UX Designer</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Contact Page -->
+            <div id="contactPage" style="display: none;">
+                <section class="contact-section">
+                    <h1><i class="fas fa-envelope"></i> Contact Us</h1>
+                    <div class="contact-form">
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="contactName">Your Name</label>
+                                <input type="text" id="contactName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail">Email</label>
+                                <input type="email" id="contactEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactMessage">Message</label>
+                                <textarea id="contactMessage" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="contact-info">
+                    <h2><i class="fas fa-map-marker-alt"></i> Our Location</h2>
+                    <div class="about-card">
+                        <i class="fas fa-building"></i>
+                        <h3>PlagiarismDetector Inc.</h3>
+                        <p>123 Tech Street</p>
+                        <p>Lahore, CA 94107</p>
+                        <p><i class="fas fa-phone"></i> (123) 456-7890</p>
+                        <p><i class="fas fa-envelope"></i> ghulamebilal@gmail.com</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="logo">
+                    <i class="fas fa-search"></i>
+                    <span>PlagiarismDetector Pro</span>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+                <p class="copyright">&copy; 2025 PlagiarismDetector Pro. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Auth Modals -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+                <button class="close-btn" id="closeLoginModal">&times;</button>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="#" id="showSignupFromLogin">Sign up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
+                <button class="close-btn" id="closeSignupModal">&times;</button>
+            </div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+                <div class="form-footer">
+                    <p>Already have an account? <a href="#" id="showLoginFromSignup">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+   <script src="js/app.js"></script>
+   <!-- Mammoth.js for .docx -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+
+<!-- PDF.js for .pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+</body>
+</html>
